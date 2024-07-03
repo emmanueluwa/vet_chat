@@ -1,11 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { StyleSheet, Text, View, Button, Pressable } from "react-native";
+import { useVoiceRecognition } from "./hooks/useVoiceRecognition";
 
 export default function App() {
   const [borderColor, setBorderColor] = useState<"lightgray" | "lightgreen">(
     "lightgray"
   );
+
+  const { state, startRecognising, stopRecognising, destroyRecogniser } =
+    useVoiceRecognition();
+
   return (
     <View style={styles.container}>
       <Text style={{ marginBottom: 30, fontWeight: "bold", fontSize: 32 }}>
@@ -22,13 +27,21 @@ export default function App() {
         Press and hold this button to record your voice. Release the button to
         send the recording, you will then hear a response
       </Text>
+      <Text style={{ marginVertical: 10, fontSize: 17 }}>
+        {JSON.stringify(state, null, 2)}
+      </Text>
+
       <Text style={{ marginVertical: 10, fontSize: 17 }}>Your message:</Text>
       <Pressable
         onPressIn={() => {
           setBorderColor("lightgreen");
+          startRecognising();
         }}
         onPressOut={() => {
           setBorderColor("lightgray");
+          stopRecognising();
+
+          // handleSubmit()
         }}
         style={{
           width: "90%",
